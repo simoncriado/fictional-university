@@ -1,8 +1,38 @@
-<!-- Functions that for example add styles to our head tag in the header file -->
-
 <?php
 
-function university_files() {
+// add_filter('use_block_editor_for_post', '__return_false', 10);
+
+function pageBanner($args = null)
+{
+    if (!$args['title']) {
+        $args['title'] = get_the_title();
+    }
+    if (!$args['subtitle']) {
+        $args['subtitle'] = get_field('page_banner_subtitle');
+    }
+    if (!$args['photo']) {
+        if (get_field('page_banner_background_image') && !is_archive() && !is_home()) {
+            $args['photo'] = get_field('page_banner_background_image')['sizes']['pageBanner'];
+        } else {
+            $args['photo'] = get_theme_file_uri('/images/ocean.jpg');
+        }
+    }
+?>
+    <div class="page-banner">
+        <div class="page-banner__bg-image" style="background-image: url(
+            <?php echo $args['photo']; ?>)">
+        </div>
+        <div class="page-banner__content container container--narrow">
+            <h1 class="page-banner__title"><?php echo $args['title']; ?></h1>
+            <div class="page-banner__intro">
+                <p><?php echo $args['subtitle']; ?></p>
+            </div>
+        </div>
+    </div>
+<?php }
+
+function university_files()
+{
     wp_enqueue_script('main-university-js', get_theme_file_uri('/build/index.js'), array('jquery'), '1.0', true);
 
     wp_enqueue_style('font-awesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
@@ -13,29 +43,45 @@ function university_files() {
 
 add_action('wp_enqueue_scripts', 'university_files');
 
-function university_features() {
+function university_features()
+{
     register_nav_menu('headerMenuLocation', 'Header Menu Location');
     register_nav_menu('footerLocationOne', 'Header Location One');
     register_nav_menu('footerLocationTwo', 'Header Location Two');
     add_theme_support('title-tag');
+    add_theme_support('post-thumbnails');
+    add_image_size('professorLandscape', 400, 260, true);
+    add_image_size('professorPortrait', 480, 650, true);
+    add_image_size('pageBanner', 1500, 350, true);
 }
 
 add_action('after_setup_theme', 'university_features');
 
-function university_adjust_queries($query) {
-    if(!is_admin() && is_post_type_archive('event') && $query->is_main_query()){
+function university_adjust_queries($query)
+{
+    // Query for the programs page
+    if (!is_admin() && is_post_type_archive('program') && $query->is_main_query()) {
+        $query->set('orderby', 'title');
+        $query->set('order', 'ASC');
+        // Setting the posts per page to -1 means that all posts will be shown
+        $query->set('posts_per_page', -1);
+    }
+
+    // Query for the events page
+    if (!is_admin() && is_post_type_archive('event') && $query->is_main_query()) {
         $today = date('Ymd');
         $query->set('meta_key', 'event_date');
         $query->set('orderby', 'meta_value_num');
         $query->set('order', 'ASC');
+        // Here we make sure to only display future events: event_date has to be more or equal than today´s date
         $query->set('meta_query', array(
             array(
-              'key' => 'event_date',
-              'compare' => '>=',
-              'value' => $today,
-              'type' => 'numeric'
+                'key' => 'event_date',
+                'compare' => '>=',
+                'value' => $today,
+                'type' => 'numeric'
             )
-          ));
+        ));
     }
 }
 
