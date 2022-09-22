@@ -1,7 +1,22 @@
 <?php
 
+require get_theme_file_path('/inc/search-route.php');
+
+// This function adds a new custom field to the REST API
+function university_custom_rest()
+{
+    register_rest_field('post', 'authorName', array(
+        'get_callback' => function () {
+            return get_the_author();
+        }
+    ));
+}
+
+add_action('rest_api_init', 'university_custom_rest');
+
 // add_filter('use_block_editor_for_post', '__return_false', 10);
 
+// Logic to create a generic banner that can be used in any other place where needed (there we would pass the unic attributes)
 function pageBanner($args = null)
 {
     if (!$args['title']) {
@@ -39,6 +54,10 @@ function university_files()
     wp_enqueue_style('custom-google-fonts', '//fonts.googleapis.com/css?family=Roboto+Condensed:300,300i,400,400i,700,700i|Roboto:100,300,400,400i,700,700i');
     wp_enqueue_style('university_main_styles', get_theme_file_uri('/build/style-index.css'));
     wp_enqueue_style('university_extra_styles', get_theme_file_uri('/build/index.css'));
+
+    wp_localize_script('main-university-js', 'universityData', array(
+        'root_url' => get_site_url()
+    ));
 }
 
 add_action('wp_enqueue_scripts', 'university_files');
