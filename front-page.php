@@ -1,5 +1,5 @@
-<!-- We open PHP to import the header. After the import the header we close PHP so that we can write
-normal HTML -->
+<!-- This powers the home page -->
+<!-- We open PHP to import the header. After the import the header we close PHP so that we can write normal HTML -->
 <?php get_header(); ?>
 
 <div class="page-banner">
@@ -13,6 +13,7 @@ normal HTML -->
   </div>
 </div>
 
+<!-- Div to display the upcoming events -->
 <div class="full-width-split group">
   <div class="full-width-split__one">
     <div class="full-width-split__inner">
@@ -48,9 +49,13 @@ normal HTML -->
       </p>
     </div>
   </div>
+
+  <!-- Div to display blog posts -->
   <div class="full-width-split__two">
     <div class="full-width-split__inner">
       <h2 class="headline headline--small-plus t-center">From Our Blogs</h2>
+
+      <!-- Creating a custom query -->
       <?php
       $homepagePosts = new WP_Query(array(
         'posts_per_page' => 2,
@@ -65,6 +70,7 @@ normal HTML -->
           </a>
           <div class="event-summary__content">
             <h5 class="event-summary__title headline headline--tiny"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h5>
+            <!-- If there is a excerpt for the post we display it, otherwise we trim the post content to 18 words -->
             <p><?php if (has_excerpt()) {
                   echo get_the_excerpt();
                 } else {
@@ -81,6 +87,7 @@ normal HTML -->
   </div>
 </div>
 
+<!-- Images slider -->
 <div class="hero-slider">
   <div data-glide-el="track" class="glide__track">
     <div class="glide__slides">

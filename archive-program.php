@@ -8,7 +8,7 @@ pageBanner(array(
 ?>
 
 <div class="container container--narrow page-section">
-    <!-- Looping through all posts or events in this case. First thing is to call the_post() to have access to the data. -->
+    <!-- Looping through all posts or programs in this case. First thing is to call the_post() to have access to the data. -->
     <ul class="link-list min-list">
         <?php
         while (have_posts()) {

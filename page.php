@@ -1,6 +1,5 @@
 <!-- File for our single pages. We also import here the header and footer -->
 <?php
-
 get_header();
 
 while (have_posts()) {
